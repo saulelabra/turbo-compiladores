@@ -9,7 +9,7 @@ The file is defined as follows:
   ● The first row indicates the set of states separated by commas.
   ● The second row indicates the alphabet symbols separated by commas.
   ● The third row indicates the initial state.
-  ● The fourth row indicates the initial state.
+  ● The fourth row indicates the final state.
   ● The next rows after the fourth one indicate the evaluation of the transition function in the following format:
   
   initialSymbol, nextSymbol: state
