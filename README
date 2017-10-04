@@ -1,0 +1,32 @@
+                                                      Project. Part I
+                                            Deterministic Finite Automaton (AFD)    
+                            ______________________________________________________________________
+
+Write a program that reads from a file the elements that define a AFD and indicate if the input
+string is accepted by the automaton.
+
+The file is defined as follows:
+  ● The first row indicates the set of states separated by commas.
+  ● The second row indicates the alphabet symbols separated by commas.
+  ● The third row indicates the initial state.
+  ● The next rows after the third one indicate the evaluation of the transition function in the
+  
+following format:
+  initialSymbol, nextSymbol: state
+  Example:
+    q0,a:q0
+    Indicates that the automaton process: δ(q0,a) = {q0}
+      
+The final output of the program has to print out the resulting transitions and if the string
+was accepted or not.
+Note: Assume that the values of the input file are correct and they do not need to be validated
+
+Deliverables rules:
+    ● Accepted programming languages: JAVA, Python, C y C++.
+    ● Put everything into a compressed zip file: xxxxproyecto_1.zip, where xxxxx is your
+    matrícula.
+    ●
+Deliverables:
+    ● Source code
+    ● PDF file with the name of the team members and a detailed explanation of the program
+    and usage instructions.
