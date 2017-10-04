@@ -1,6 +1,6 @@
-                                                      Project. Part I
-                                            Deterministic Finite Automaton (AFD)    
-                            ______________________________________________________________________
+                                           Project. Part I
+                                 Deterministic Finite Automaton (AFD)    
+                ______________________________________________________________________
 
 Write a program that reads from a file the elements that define a AFD and indicate if the input
 string is accepted by the automaton.
