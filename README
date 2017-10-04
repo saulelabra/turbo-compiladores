@@ -10,23 +10,21 @@ The file is defined as follows:
   ● The second row indicates the alphabet symbols separated by commas.
   ● The third row indicates the initial state.
   ● The fourth row indicates the initial state.
-  ● The next rows after the fourth one indicate the evaluation of the transition function in the
+  ● The next rows after the fourth one indicate the evaluation of the transition function in the following format:
   
-following format:
   initialSymbol, nextSymbol: state
   Example:
     q0,a:q0
     Indicates that the automaton process: δ(q0,a) = {q0}
       
-The final output of the program has to print out the resulting transitions and if the string
-was accepted or not.
+The final output of the program has to print out the resulting transitions and if the string was accepted or not.
+
 Note: Assume that the values of the input file are correct and they do not need to be validated
 
 Deliverables rules:
     ● Accepted programming languages: JAVA, Python, C y C++.
     ● Put everything into a compressed zip file: xxxxproyecto_1.zip, where xxxxx is your
     matrícula.
-    ●
 Deliverables:
     ● Source code
     ● PDF file with the name of the team members and a detailed explanation of the program
