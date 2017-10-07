@@ -40,8 +40,10 @@ f = open('proyecto.txt', 'r')
 
 for line in f.readlines():
     if i >= 4:
-        line.split()
-        tf[(int(line[0]),line[2])] = int(line[4]);
+        line = line.translate(None, 'q');
+        line = line.replace(':', ',');
+        line = line.split(',')
+        tf[(int(line[0]),line[1])] = int(line[2]);
     else:
         myList.append(line)
     i=i+1;
@@ -59,9 +61,4 @@ inp_program = list(cadena);
 if (d.run_with_input_list(inp_program)==True):
     print("\nACEPTADA");
 else: 
-    print("\nNO ES ACEPTADA");   
-
-
-
-
-
+    print("\nNO ES ACEPTADA");  

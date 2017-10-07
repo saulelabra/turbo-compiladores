@@ -41,7 +41,11 @@ f = open('proyecto.txt', 'r')
 for line in f.readlines():
     if i >= 4:
         line.split()
-        tf[(int(line[0]),line[2])] = int(line[4]);
+        line = line.translate(str.maketrans('', '','q'));
+        line = line.replace(':',',');
+        line = line.split(',')
+        print (line);
+        tf[(int(line[0]),line[1])] = int(line[2]);
     else:
         myList.append(line)
     i=i+1;
