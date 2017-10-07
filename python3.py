@@ -31,7 +31,7 @@ class DFA:
 		return self.in_accept_state();
 	pass;
 
-cadena = raw_input("Dime una cadena: ");
+cadena = input("Dime una cadena: ");
 i=0;
 myList=[];
 tf = dict();
@@ -55,13 +55,8 @@ print("\nEstados de transicion:");
 d = DFA(states, alphabet, tf, start_state, accept_states);
 
 inp_program = list(cadena);
- 
+
 if (d.run_with_input_list(inp_program)==True):
     print("\nACEPTADA");
 else: 
     print("\nNO ES ACEPTADA");   
-
-
-
-
-
