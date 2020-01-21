@@ -21,10 +21,9 @@ class Automata:
             return destination_states         
 
     #Gets all states reachable with epsilon starting from "current_state"
-    def eClosure(self, current_state):
-        origin_states = [current_state]
-
-        destination_states = self.eClosureRec(origin_states, [current_state])
+    def eClosure(self, current_states):
+        #destination_states = self.eClosureRec(origin_states, [current_state])
+        destination_states = self.eClosureRec(current_states, current_states)
 
         return destination_states
 
@@ -37,37 +36,54 @@ class Automata:
             for dest in transition_function[states.index(state)][alphabet.index(input)+1]:
                 reachable_states.append(dest)
 
-        return reachable_states        
+        return reachable_states
+
+    def appendOnlyNew(self, listA, listB):
+        for element in listB:
+            if(not(element in listA)):
+                listA.append(element)
+        return listA
+
+    def generateTuple(self, origin_states):
+        tuple = []
+
+        #generate structure of the tuple, one space per input (alphabet)
+        #Get reachable states with e-closure
+        tuple.append(self.eClosure(origin_states))
+        for symbol in alphabet:
+            tuple.append([])
+        
+        #iterate over each origin state and get reachable states wiht each input of the alphabet
+        for origin in tuple[0]:
+            print("Origin: " + origin)
+            for i, symbol in enumerate(alphabet):
+                print("Symbol: " + symbol)
+                for dest in self.getReachableStates(origin, symbol):
+                    tuple[i + 1].append(dest)
+                    print("Reachable: " + dest)
+
+        #skip the first element of the tuple (origin states)        
+        iter_input_tuples = iter(tuple)
+        next(iter_input_tuples)
+
+        #get reachable states with e-closure from last step results
+        for i, input_tuple in enumerate(iter_input_tuples, start=1):
+            for origin_from_reachable in input_tuple:
+                eClosure_res = self.eClosure([origin_from_reachable])
+                print("origin_from_reachable: " + str(origin_from_reachable) + " eClosure_res: " + str(eClosure_res))
+                if(len(eClosure_res) > 1):
+                    print("if: " + str(eClosure_res))
+                    self.appendOnlyNew(input_tuple, eClosure_res)
+
+        return tuple
 
     def convertToDFA(self):
         new_states = []
         new_transition_function = []
         new_start_state = None
         conversion_table = []
-        first_tuple = []
 
-        #build first tuple of the conversion table
-        first_tuple.append(self.eClosure("1"))
-        for symbol in alphabet:
-            first_tuple.append([])
-        
-        for origin in first_tuple[0]:
-            print("Origin: " + origin)
-            for i, symbol in enumerate(alphabet):
-                print("Symbol: " + symbol)
-                for dest in self.getReachableStates(origin, symbol):
-                    first_tuple[i + 1].append(dest)
-                    print("Reachable: " + dest)
-                
-        iter_input_tuples = iter(first_tuple)
-        next(iter_input_tuples)
-
-        for i, input_tuple in enumerate(iter_input_tuples, start=1):
-            for origin_from_reachable in input_tuple:
-                eClosure_res = self.eClosure(origin_from_reachable)
-                print("origin_from_reachable: " + str(origin_from_reachable) + " eClosure_res: " + str(eClosure_res))
-                if(len(eClosure_res) > 1):
-                    input_tuple.append(self.eClosure(eClosure_res))
+        first_tuple = self.generateTuple(["1"])
 
         print(first_tuple)
 
