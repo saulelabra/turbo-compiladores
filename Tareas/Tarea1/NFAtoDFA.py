@@ -6,6 +6,7 @@ class Automata:
         self.start_state = start_state
         self.accept_states = accept_states
 
+    #Recursive function used by eClosure()
     def eClosureRec(self, origin_states, destination_states):
         if(len(origin_states) > 0):
             new_destination_states = []
@@ -19,6 +20,7 @@ class Automata:
         else:
             return destination_states         
 
+    #Gets all states reachable with epsilon starting from "current_state"
     def eClosure(self, current_state):
         origin_states = [current_state]
 
@@ -26,6 +28,7 @@ class Automata:
 
         return destination_states
 
+    #Gets reachable states starting from "current_state_group" list with determined input
     def getReachableStates(self, current_state_group, input):
         reachable_states = []
         
@@ -40,18 +43,33 @@ class Automata:
         new_states = []
         new_transition_function = []
         new_start_state = None
-        new_accept_states = []
+        conversion_table = []
+        first_tuple = []
 
-        transition_tuple = [None] * (len(alphabet) + 1)
-        new_transition_function.append(transition_tuple)
-        new_transition_function[0][0] = [self.eClosure(1)]
-        new_transition_function[0]
+        #build first tuple of the conversion table
+        first_tuple.append(self.eClosure("1"))
+        for symbol in alphabet:
+            first_tuple.append([])
+        
+        for origin in first_tuple[0]:
+            print("Origin: " + origin)
+            for i, symbol in enumerate(alphabet):
+                print("Symbol: " + symbol)
+                for dest in self.getReachableStates(origin, symbol):
+                    first_tuple[i + 1].append(dest)
+                    print("Reachable: " + dest)
+                
+        iter_input_tuples = iter(first_tuple)
+        next(iter_input_tuples)
 
-        while(new_transition_function_size != len(new_transition_function)):
-            new_transition_function.append([])
+        for i, input_tuple in enumerate(iter_input_tuples, start=1):
+            for origin_from_reachable in input_tuple:
+                eClosure_res = self.eClosure(origin_from_reachable)
+                print("origin_from_reachable: " + str(origin_from_reachable) + " eClosure_res: " + str(eClosure_res))
+                if(len(eClosure_res) > 1):
+                    input_tuple.append(self.eClosure(eClosure_res))
 
-        #get first new state
-        self.eClosure("1")
+        print(first_tuple)
 
         return 0
 
@@ -69,7 +87,7 @@ transition_function = [
     [["6","7"],[],[],[]],
     [[],["8"],[],[]],
     [[],[],["8"],[]],
-    [[1],[],[],[]],
+    [["1"],[],[],[]],
 ]
 
 start_state = 1
@@ -77,4 +95,4 @@ accept_states = [4]
 
 exampleNFA = Automata(states, alphabet, transition_function, start_state, accept_states)
 
-print(exampleNFA.getReachableStates("2", "a"))
+exampleNFA.convertToDFA()
