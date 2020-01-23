@@ -1,22 +1,68 @@
 class Stack:
-    def __init__(self, itemlist=[]):
-        self.items = itemlist
+    def __init__(self):
+        self.items = []
 
     def isEmpty(self):
-        if self.items == []:
-            return True
-        else:
-            return False
+        return self.items == []
 
     def top(self):
-        return self.items[-1] #d
+        return self.items[len(self.items)-1] 
     
     def pop(self):
         return self.items.pop()
 
     def push(self, item):
         self.items.append(item)
-        return 1
+    
+    def size(self):
+        return len(self.items)
+
+
+# Precedence
+precedenceDict  = {
+  '(': 1,
+  '|': 2, # alternate
+  '.': 3, # concatenate
+  '?': 4, # zero or one
+  '*': 4, # zero or more
+  '+': 4, # one or one
+  # else 6
+}
+
+def precedenceOf(token):
+    return precedenceDict[token] or 6
+
+# Turns the infix expression to a postfix as it is easier to evaluate by order of precedence
+# As defined per Thompson paper
+def infixToPostfixRegex(reStr):
+    output = []
+    stack = Stack()
+
+    for char in reStr:
+        if char == '(':
+            stack.push(char)
+        elif char == ')':
+            while (stack.top() != '('): #sss
+                output.append(stack.pop())
+            stack.pop() # pop (
+        else:
+            while stack.size():
+                if precedenceDict.get(stack.top(), 6) >= precedenceDict.get(char, 6):
+                    output.append(stack.pop())
+                else:
+                    break
+            stack.push(char)
+        # If ends
+    # Loop ends
+    # Offload stack to output
+    while (stack.size()):
+        output.append(stack.pop())
+
+    #result = output + ""
+    print(reStr, " - ", output)
+
+    return output
+# Func ends
 
 class State:
     def __init__(self, isEnd):
@@ -34,17 +80,9 @@ class NFA:
         self.transitions_states = transitions_states_table
         return
 
-
-
     # Inserts a . when a concatenation should happen
 def insertConcatenationOperator(regex):
     return None
-
-    # Turns the infix expression to a postfix as it is easier to evaluate by order of precedence
-    # As defined per Thompson paper
-def inFixToPostFix(regesInfix):
-    return None
-
 
 def createEpsilonTrans():
     # Create Start and End
@@ -133,7 +171,7 @@ def createNFA(postFixRegex):
         return createEpsilonTrans()# epsilon transition
 
     # Empty Stack
-    stack = Stack([])
+    stack = Stack()
 
     for token in postFixRegex:
         if token == "*":        # Star, closure
@@ -153,5 +191,9 @@ def createNFA(postFixRegex):
     print(stack.top())
     return stack.pop() # Only one NFA should be there 
 
+infixToPostfixRegex("a.b.c")       # ab.c.
+infixToPostfixRegex("a.b|c")       # ab.c|
+infixToPostfixRegex("a.b+.c")      # ab+.c.
+infixToPostfixRegex("a.(b.b)+.c")  # abb.+.c.
 
 createNFA("ab.")
