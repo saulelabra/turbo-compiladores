@@ -1,8 +1,8 @@
 # abc -> a.b.c -> ab.c.
 # http://en.wikipedia.org/wiki/Shunting_yard_algorithm
 class Stack:
-    def __init__(self, itemlist=[]):
-        self.items = itemlist
+    def __init__(self):
+        self.items = []
 
     def isEmpty(self):
         return self.items == []
@@ -20,7 +20,7 @@ class Stack:
         return len(self.items)
 
 def infixToPostfixRegex(reStr):
-    output = Stack()
+    output = []
     stack = Stack()
 
     for char in reStr:
@@ -28,12 +28,12 @@ def infixToPostfixRegex(reStr):
             stack.push(char)
         elif char == ')':
             while (stack.top() != '('): #sss
-                output.push(stack.pop())
+                output.append(stack.pop())
             stack.pop() # pop (
         else:
             while stack.size():
-                if precedenceDict[stack.top()] >= precedenceDict[char]:
-                    output.push(stack.pop())
+                if precedenceDict.get(stack.top(), 6) >= precedenceDict.get(char, 6):
+                    output.append(stack.pop())
                 else:
                     break
             stack.push(char)
@@ -41,12 +41,12 @@ def infixToPostfixRegex(reStr):
     # Loop ends
     # Offload stack to output
     while (stack.size()):
-        output.push(stack.pop())
+        output.append(stack.pop())
 
-    result = output + ""
-    print(reStr, " - ", result)
+    #result = output + ""
+    print(reStr, " - ", output)
 
-    return result
+    return output
 # Func ends
 
 # Precedence
