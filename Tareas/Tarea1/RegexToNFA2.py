@@ -59,7 +59,7 @@ def infixToPostfixRegex(reStr):
         output.append(stack.pop())
 
     #result = output + ""
-    print(reStr, " - ", output)
+    #print(reStr, " - ", output) # DEBUG
 
     return output
 # Func ends
@@ -191,9 +191,9 @@ def createNFA(postFixRegex):
     print(stack.top())
     return stack.pop() # Only one NFA should be there 
 
-infixToPostfixRegex("a.b.c")       # ab.c.
-infixToPostfixRegex("a.b|c")       # ab.c|
-infixToPostfixRegex("a.b+.c")      # ab+.c.
-infixToPostfixRegex("a.(b.b)+.c")  # abb.+.c.
-
-createNFA("ab.")
+#   infixToPostfixRegex("a.b.c")       # ab.c.
+#   infixToPostfixRegex("a.b|c")       # ab.c|
+#   infixToPostfixRegex("a.b+.c")      # ab+.c.
+#   infixToPostfixRegex("a.(b.b)+.c")  # abb.+.c.
+str = ""
+createNFA(str.join(infixToPostfixRegex("a.b.c")))
