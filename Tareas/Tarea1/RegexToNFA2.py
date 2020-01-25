@@ -111,8 +111,24 @@ def createConcatTrans(transitionList, first, second): # NFA A and NFA B
 
 # Union                     |
 def createUnionTrans(transitionList, first, second):# NFA A and NFA B
+    # Create main NFA
+    newNFA = NFA(len(states), len(states)+1)
+    states.append(len(states))
+    states.append(len(states))
 
-    return 0 # Return 2
+    # Epsilon start to start NFA A
+    createEpsilonTrans(transitionList, newNFA.startId, first.startId)
+
+    # Epsilon start to start NFA B
+    createEpsilonTrans(transitionList, newNFA.startId, second.startId)
+
+    # Epsilon NFA A end to end 
+    createEpsilonTrans(transitionList, first.endId, newNFA.endId)
+
+    # Epsilon NFA B end to end 
+    createEpsilonTrans(transitionList, second.endId, newNFA.endId)
+
+    return newNFA
 
 # Kleene Star, Closure      *
 def createClosureTrans(transitionList, nfa): # NFA
@@ -216,6 +232,6 @@ def createNFA(postFixRegex):
 #   infixToPostfixRegex("a.b|c")       # ab.c|
 #   infixToPostfixRegex("a.b+.c")      # ab+.c.
 #   infixToPostfixRegex("a.(b.b)+.c")  # abb.+.c.
-str = "".join(infixToPostfixRegex("a+"))
+str = "".join(infixToPostfixRegex("a|b"))
 #print(infixToPostfixRegex("a.b.c.c"))
 createNFA(str)
