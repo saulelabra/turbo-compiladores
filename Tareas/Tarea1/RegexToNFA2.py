@@ -176,6 +176,8 @@ def createNFA(postFixRegex):
     for token in postFixRegex:
         if token == "*":        # Star, closure
             stack.push(createClosureTrans(transitionList, stack.pop()))
+        elif token == "+":      # Plus
+            stack.push(createPlusTrans(transitionList, stack.pop()))
         elif token == "|":      # Union
             second = stack.pop()
             first = stack.pop()
@@ -214,6 +216,6 @@ def createNFA(postFixRegex):
 #   infixToPostfixRegex("a.b|c")       # ab.c|
 #   infixToPostfixRegex("a.b+.c")      # ab+.c.
 #   infixToPostfixRegex("a.(b.b)+.c")  # abb.+.c.
-str = "".join(infixToPostfixRegex("a*"))
+str = "".join(infixToPostfixRegex("a+"))
 #print(infixToPostfixRegex("a.b.c.c"))
 createNFA(str)
