@@ -32,6 +32,10 @@ precedenceDict  = {
 def precedenceOf(token):
     return precedenceDict[token] or 6
 
+# Inserts a . when a concatenation should happen
+def insertConcatenationOperator(regex): #TODO
+    return None
+
 # Turns the infix expression to a postfix as it is easier to evaluate by order of precedence
 # As defined per Thompson paper
 def infixToPostfixRegex(reStr):
@@ -57,143 +61,114 @@ def infixToPostfixRegex(reStr):
     # Offload stack to output
     while (stack.size()):
         output.append(stack.pop())
-
-    #result = output + ""
-    #print(reStr, " - ", output) # DEBUG
-
     return output
 # Func ends
 
-class State:
-    def __init__(self, isEnd):
-        # self.isStart = isStart
-        self.isEnd = isEnd
-        self.epsilonTransitions = []
-        self.transitions = {}
+# Global variables
+states = []                 # List contains all states
+dictAlphabet = {}           # Dictionary key alphabet, saves column number on transition list
+alphabet = set()
 
 class NFA:
-    def __init__(self, initial_state, final_state, states, alphabet, transitions_states_table):
-        self.initial_state = initial_state
-        self.final_states = final_state
-        self.states = states
-        self.alphabet = alphabet
-        self.transitions_states = transitions_states_table
-        return
+    def __init__(self, startId, endId):
+        self.startId = startId
+        self.endId = endId
 
-    # Inserts a . when a concatenation should happen
-def insertConcatenationOperator(regex):
-    return None
-
-def createEpsilonTrans():
-    # Create Start and End
-    start = State(False)
-    end = State(True)
+# Just joins two states
+def createEpsilonTrans(transitionList, startId, endId):
     # Receive number of the from state and to where is it going
-    start.epsilonTransitions.append(end) # add epsilon transition
-    #from.epsilonTransition.push(to)
-    return {start, end}
+    transitionList[startId][0] = endId
 
-def createSymbolTrans(symbol):
+def createSymbolTrans(transitionList, symbol):
     # Create Start and End state
-    start = State(False)
-    end = State(True)
-    # Receive number of the from state and to where is it going
-    start.transitions[symbol] = end
-    # from transition to with 
-    return {start, end}
+    newNFA = NFA(len(states),len(states)+1)
+    states.append(len(states))
+    states.append(len(states))
+
+    print(newNFA.startId)
+    print(dictAlphabet[symbol])
+    # Add transition to list
+    transitionList[newNFA.startId][dictAlphabet[symbol]]= newNFA.endId
+    print(transitionList)
+    return newNFA
 
 
 # Concat
-def createConcatTrans(first, second): # NFA A and NFA B
+def createConcatTrans(transitionList, first, second): # NFA A and NFA B
     # Create epsilon between NFA A end and NFA B start
-    first.end.epsilonTransitions.append(second.start)
-    first.end.isEnd = False
-    # Disable end from NFA A end
-    return  {first.start, second.end} # NFA A start and NFA B end
+    createEpsilonTrans(transitionList, first.endId, second.startId)
+    newNFA = NFA(first.startId, second.endId)
+
+    return  newNFA # NFA A start and NFA B end
 
 # Union                     |
-def createUnionTrans(first, second):# NFA A and NFA B
-    # Create start state
-    start = State(False)
-    # Epsilon trans to NFA from start and eps trans to NFA B from start
-    start.epsilonTransitions.append(first.start)
-    start.epsilonTransitions.append(second.start)
-    # Create end  state
-    end = State(True)
-    # Epsilon trans from NFA A to end state
-    first.end.epsilonTransitions.append(end)
-    # Epsilon trans from NFA B to end state
-    second.end.epsilonTransitions.append(end)
-    # Disable NFA A and NFA B ends
-    first.end.isEnd = False
-    second.end.isEnd = False
+def createUnionTrans(transitionList, first, second):# NFA A and NFA B
 
-    return {start, end}
+    return 0 # Return 2
 
 # Kleene Star, Closure      *
-def createClosureTrans(nfa): # NFA
-    # Create start and end state
-    start = State(False)
-    end = State(True)
-    # Add epsilon trans start to end
-    start.epsilonTransitions.append(end)
-    # Add epsilon trans start to NFA start
-    start.epsilonTransitions.append(nfa.start)
-    # Add epsilon trans NFA end to end
-    nfa.end.epsilonTransitions.append(end)
-    # Add epsilon trans NFA end to NFA start
-    nfa.end.epsilonTransitions.append(nfa.start)
-    # Disable nfa end 
-    nfa.end.isEnd = False
+def createClosureTrans(transitionList, nfa): # NFA
+    newNFA = NFA(-1, -1) #TODO
 
-    return {start, end}
+    return newNFA
 
 # Kleene Plus               +
 # Same as Kleense Star but without epsilon skipping everything
-def createPlusTrans(nfa):
-    # Create start and end state
-    start = State(False)
-    end = State(True)
-    # Add epsilon trans start to NFA start
-    start.epsilonTransitions.append(nfa.start)
-    # Add epsilon trans NFA end to end
-    nfa.end.epsilonTransitions.append(end)
-    # Add epsilon trans NFA end to NFA start
-    nfa.end.epsilonTransitions.append(nfa.start)
-    # Disable nfa end 
-    nfa.end.isEnd = False
+def createPlusTrans(transitionList, nfa):
+    newNFA = NFA(-1, -1) #TODO
 
-    return {start, end}
+    return newNFA
+
 
 # Regex to NFA creator
 def createNFA(postFixRegex):
-    if postFixRegex == '' or postFixRegex == ' ': # empty regex
-        return createEpsilonTrans()# epsilon transition
+    # Create Transition list maximum size posible according to regex
+    transitionList = []
+    # Pre-populate list with -1 to avoid out of range
+    transitionList = [ [ -1 for i in range(len(set(postFixRegex))) ] for j in range(len(postFixRegex)*2) ]
+    print(" ", transitionList)
 
+    if postFixRegex == '' or postFixRegex == ' ': # empty regex
+        # Creates a epsilon trans with states
+        newNFA = NFA(len(states),len(states)+1) # TODO
+        states.append(len(states))
+        states.append(len(states)+1)
+        transitionList[len(states)-2][0].append(len(states)-1)
+        return newNFA
     # Empty Stack
     stack = Stack()
-
+    
     for token in postFixRegex:
         if token == "*":        # Star, closure
-            stack.push(createClosureTrans(stack.pop()))
+            stack.push(createClosureTrans(transitionList, stack.pop()))
         elif token == "|":      # Union
-            first = stack.pop()
             second = stack.pop()
-            stack.push(createUnionTrans(first, second))
+            first = stack.pop()
+            stack.push(createUnionTrans(transitionList, first, second))
         elif token == ".":      # Concat
-            first = stack.pop()
             second = stack.pop()
-            stack.push(createConcatTrans(first, second))
+            first = stack.pop()
+            stack.push(createConcatTrans(transitionList, first, second))
         else:                    # Character 
-            stack.push(createSymbolTrans(token))
-            print("Token", token, " ", stack.top() ,"\n")
-
-    print(stack.top())
-    return stack.pop() # Only one NFA should be there 
+            if token not in alphabet:
+                # Add token to alphabet set
+                alphabet.add(token)
+                # Add alphabet symbol to dict, sync with column number
+                dictAlphabet[token] = len(alphabet)
+            stack.push(createSymbolTrans(transitionList, token))
+    print("\n Alphabet :")
+    print(alphabet)
+    print("\n Transition List :")
+    print(transitionList)
+    print("\n State List :")
+    print(states)
+    #return stack.pop() # Only one NFA should be there 
 
 #   infixToPostfixRegex("a.b.c")       # ab.c.
 #   infixToPostfixRegex("a.b|c")       # ab.c|
 #   infixToPostfixRegex("a.b+.c")      # ab+.c.
 #   infixToPostfixRegex("a.(b.b)+.c")  # abb.+.c.
-str = ""
-createNFA(str.join(infixToPostfixRegex("a.b.c")))
+str = "".join(infixToPostfixRegex("a.b.c.c"))
+
+#print(infixToPostfixRegex("a.b.c.c"))
+createNFA(str)
