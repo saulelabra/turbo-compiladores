@@ -68,7 +68,7 @@ def infixToPostfixRegex(reStr):
 states = []                 # List contains all states
 dictAlphabet = {}           # Dictionary key alphabet, saves column number on transition list
 alphabet = set()
-
+# collections.OrderedDict()
 class NFA:
     def __init__(self, startId, endId):
         self.startId = startId
@@ -85,11 +85,9 @@ def createSymbolTrans(transitionList, symbol):
     states.append(len(states))
     states.append(len(states))
 
-    print(newNFA.startId)
-    print(dictAlphabet[symbol])
     # Add transition to list
     transitionList[newNFA.startId][dictAlphabet[symbol]]= newNFA.endId
-    print(transitionList)
+
     return newNFA
 
 
@@ -108,14 +106,41 @@ def createUnionTrans(transitionList, first, second):# NFA A and NFA B
 
 # Kleene Star, Closure      *
 def createClosureTrans(transitionList, nfa): # NFA
-    newNFA = NFA(-1, -1) #TODO
+    # Create main NFA
+    newNFA = NFA(len(states), len(states)+1)
+    states.append(len(states))
+    states.append(len(states))
+
+    # Epsilon trans to NFA
+    createEpsilonTrans(transitionList, newNFA.startId, nfa.startId)
+
+    # Epsilon trans from NFA end to end
+    createEpsilonTrans(transitionList, nfa.endId, newNFA.endId)
+
+    # Epsilon trans from NFA end to NFA start
+    createEpsilonTrans(transitionList, nfa.endId, nfa.startId)
+
+    # Epsilon trans start to end 
+    createEpsilonTrans(transitionList, newNFA.startId, newNFA.endId)
 
     return newNFA
 
 # Kleene Plus               +
 # Same as Kleense Star but without epsilon skipping everything
 def createPlusTrans(transitionList, nfa):
-    newNFA = NFA(-1, -1) #TODO
+    # Create main NFA
+    newNFA = NFA(len(states), len(states)+1)
+    states.append(len(states))
+    states.append(len(states))
+
+    # Epsilon trans to NFA
+    createEpsilonTrans(transitionList, newNFA.startId, nfa.startId)
+
+    # Epsilon trans from NFA end to end
+    createEpsilonTrans(transitionList, nfa.endId, newNFA.endId)
+
+    # Epsilon trans from NFA end to NFA start
+    createEpsilonTrans(transitionList, nfa.endId, nfa.startId)
 
     return newNFA
 
@@ -124,9 +149,8 @@ def createPlusTrans(transitionList, nfa):
 def createNFA(postFixRegex):
     # Create Transition list maximum size posible according to regex
     transitionList = []
-    # Pre-populate list with -1 to avoid out of range
-    transitionList = [ [ -1 for i in range(len(set(postFixRegex))) ] for j in range(len(postFixRegex)*2) ]
-    print(" ", transitionList)
+    # Pre-populate list with -1 to avoid out of rangeto
+    transitionList = [ [ -1 for i in range(len(set(postFixRegex))) ] for j in range(len(postFixRegex)*2) ] #TODO
 
     if postFixRegex == '' or postFixRegex == ' ': # empty regex
         # Creates a epsilon trans with states
@@ -156,19 +180,29 @@ def createNFA(postFixRegex):
                 # Add alphabet symbol to dict, sync with column number
                 dictAlphabet[token] = len(alphabet)
             stack.push(createSymbolTrans(transitionList, token))
-    print("\n Alphabet :")
-    print(alphabet)
+    newNFA = stack.pop()
+    startState = newNFA.startId
+    endState = newNFA.endId
+    
+    print("\n Transition List")
+    print("\n", transitionList)
+    print("\n Dict Alphabet :")
+    print(dictAlphabet)
     print("\n Transition List :")
     print(transitionList)
     print("\n State List :")
     print(states)
+    print("\n Start State :")
+    print(startState)
+    print("\n End State :")
+    print(endState)
+    
     #return stack.pop() # Only one NFA should be there 
 
 #   infixToPostfixRegex("a.b.c")       # ab.c.
 #   infixToPostfixRegex("a.b|c")       # ab.c|
 #   infixToPostfixRegex("a.b+.c")      # ab+.c.
 #   infixToPostfixRegex("a.(b.b)+.c")  # abb.+.c.
-str = "".join(infixToPostfixRegex("a.b.c.c"))
-
+str = "".join(infixToPostfixRegex("a*"))
 #print(infixToPostfixRegex("a.b.c.c"))
 createNFA(str)
