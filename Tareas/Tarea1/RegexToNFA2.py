@@ -215,15 +215,15 @@ def createNFA(postFixRegex):
     
     print("\n Transition List")
     print("\n", transitionList)
-    print("\n Dict Alphabet :")
+    print("\nDict Alphabet :")
     print(dictAlphabet)
-    print("\n Transition List :")
+    print("\nTransition List :")
     print(transitionList)
-    print("\n State List :")
+    print("\nState List :")
     print(states)
-    print("\n Start State :")
+    print("\nStart State :")
     print(startState)
-    print("\n End State :")
+    print("\nEnd State :")
     print(endState)
 
     #return stack.pop() # Only one NFA should be there 
@@ -232,6 +232,6 @@ def createNFA(postFixRegex):
 #   infixToPostfixRegex("a.b|c")       # ab.c|
 #   infixToPostfixRegex("a.b+.c")      # ab+.c.
 #   infixToPostfixRegex("a.(b.b)+.c")  # abb.+.c.
-str = "".join(infixToPostfixRegex("a|b"))
-#print(infixToPostfixRegex("a.b.c.c"))
+str = "".join(infixToPostfixRegex("a.(b|b)+.c"))
+print(str)
 createNFA(str)
