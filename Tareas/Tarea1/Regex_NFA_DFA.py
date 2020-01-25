@@ -316,7 +316,6 @@ class Regex:
             return newNFA
         # Empty Stack
         stack = Stack()
-        print(transitionList)
         for token in postFixRegex:
             if token == "*":        # Star, closure
                 stack.push(self.createClosureTrans(transitionList, stack.pop()))
@@ -340,21 +339,28 @@ class Regex:
         newNFA = stack.pop()
         startState = newNFA.startId
         endState = newNFA.endId
-        
-        print("\n Transition List")
-        print("\n", transitionList)
-        print("\nDict Alphabet :")
-        print(self.dictAlphabet)
-        print("\nTransition List :")
-        print(transitionList)
-        print("\nState List :")
-        print(self.states)
-        print("\nStart State :")
-        print(startState)
-        print("\nEnd State :")
-        print(endState)
 
-        return [self.states, self.dictAlphabet, transitionList, startState, endState]
+        alphabetList = []
+        for symbol, index in self.dictAlphabet.items():
+            alphabetList.append(symbol)
+
+        startState = str(startState)
+        endState = str(endState)
+        out_transition_list = []
+        out_states = []
+
+        for i, row in enumerate(transitionList):
+            out_transition_list.append([])
+            for j, element in enumerate(row):
+                out_transition_list[i].append([])
+                for dest in element:
+                    if(dest != -1):
+                        out_transition_list[i][j].append(str(dest))
+        
+        for stateElement in self.states:
+            out_states.append(str(stateElement))
+
+        return [out_states, alphabetList, out_transition_list, startState, endState]
 class Stack:
     def __init__(self):
         self.items = []
@@ -385,6 +391,21 @@ class Stack:
 
 example_regex = Regex("a*")
 automataTuple = example_regex.createNFA()
-example_automata = Automata(automataTuple[0], automataTuple[1], automataTuple[2], str(automataTuple[3]), [automataTuple[4]])
+
+states = ["0", "1", "2", "3"]
+alphabet = ["a"]
+
+#Order of matrix: epsilon, a, b, c
+transition_function = [
+    [[],["1"]],
+    [["3", "0"],[]],
+    [["0", "3"],[]],
+    [[],[]]
+]
+
+start_state = "2"
+accept_states = ["3"]
+
+example_automata = Automata(states, alphabet, transition_function, start_state, accept_states)
 
 print(example_automata.convertToDFA())
