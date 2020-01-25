@@ -77,7 +77,13 @@ class NFA:
 # Just joins two states
 def createEpsilonTrans(transitionList, startId, endId):
     # Receive number of the from state and to where is it going
-    transitionList[startId][0] = endId
+    preSymbol = transitionList[startId][0][0] 
+    if preSymbol == -1:
+        transitionList[startId][0][0] = endId
+    else:
+        transitionList[startId][0] = [preSymbol, endId]
+
+    
 
 def createSymbolTrans(transitionList, symbol):
     # Create Start and End state
@@ -86,7 +92,11 @@ def createSymbolTrans(transitionList, symbol):
     states.append(len(states))
 
     # Add transition to list
-    transitionList[newNFA.startId][dictAlphabet[symbol]]= newNFA.endId
+    preSymbol = transitionList[newNFA.startId][dictAlphabet[symbol]][0]
+    if preSymbol == -1:
+        transitionList[newNFA.startId][dictAlphabet[symbol]][0] = newNFA.endId
+    else:
+        transitionList[newNFA.startId][dictAlphabet[symbol]] = [preSymbol,newNFA.endId]
 
     return newNFA
 
@@ -149,19 +159,20 @@ def createPlusTrans(transitionList, nfa):
 def createNFA(postFixRegex):
     # Create Transition list maximum size posible according to regex
     transitionList = []
-    # Pre-populate list with -1 to avoid out of rangeto
-    transitionList = [ [ -1 for i in range(len(set(postFixRegex))) ] for j in range(len(postFixRegex)*2) ] #TODO
+    # Pre-populate list with -1 to avoid out of range
+    transitionList = [ [ [-1 for i in range(1)] for i in range(len(set(postFixRegex))) ] for j in range(len(postFixRegex)*2) ] #TODO
 
     if postFixRegex == '' or postFixRegex == ' ': # empty regex
         # Creates a epsilon trans with states
         newNFA = NFA(len(states),len(states)+1) # TODO
         states.append(len(states))
-        states.append(len(states)+1)
-        transitionList[len(states)-2][0].append(len(states)-1)
+        states.append(len(states))
+        transitionList[len(states)-2][0][0] = len(states)-1
+
         return newNFA
     # Empty Stack
     stack = Stack()
-    
+    print(transitionList)
     for token in postFixRegex:
         if token == "*":        # Star, closure
             stack.push(createClosureTrans(transitionList, stack.pop()))
@@ -196,7 +207,7 @@ def createNFA(postFixRegex):
     print(startState)
     print("\n End State :")
     print(endState)
-    
+
     #return stack.pop() # Only one NFA should be there 
 
 #   infixToPostfixRegex("a.b.c")       # ab.c.
