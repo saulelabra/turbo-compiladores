@@ -141,6 +141,7 @@ class NFA:
         self.startId = startId
         self.endId = endId
 
+
 class Regex:
     # Precedence
     precedenceDict  = {
@@ -198,13 +199,18 @@ class Regex:
         return output
     # Func ends
 
-    
     # collections.OrderedDict()
 
     # Just joins two states
     def createEpsilonTrans(self, transitionList, startId, endId):
         # Receive number of the from state and to where is it going
-        transitionList[startId][0] = endId
+        preSymbol = transitionList[startId][0][0] 
+        if preSymbol == -1:
+            transitionList[startId][0][0] = endId
+        else:
+            transitionList[startId][0] = [preSymbol, endId]
+
+        
 
     def createSymbolTrans(self, transitionList, symbol):
         # Create Start and End state
@@ -213,7 +219,11 @@ class Regex:
         self.states.append(len(self.states))
 
         # Add transition to list
-        transitionList[newNFA.startId][self.dictAlphabet[symbol]]= newNFA.endId
+        preSymbol = transitionList[newNFA.startId][self.dictAlphabet[symbol]][0]
+        if preSymbol == -1:
+            transitionList[newNFA.startId][self.dictAlphabet[symbol]][0] = newNFA.endId
+        else:
+            transitionList[newNFA.startId][self.dictAlphabet[symbol]] = [preSymbol,newNFA.endId]
 
         return newNFA
 
@@ -228,8 +238,24 @@ class Regex:
 
     # Union                     |
     def createUnionTrans(self, transitionList, first, second):# NFA A and NFA B
+        # Create main NFA
+        newNFA = NFA(len(self.states), len(self.states)+1)
+        self.states.append(len(self.states))
+        self.states.append(len(self.states))
 
-        return 0 # Return 2
+        # Epsilon start to start NFA A
+        self.createEpsilonTrans(transitionList, newNFA.startId, first.startId)
+
+        # Epsilon start to start NFA B
+        self.createEpsilonTrans(transitionList, newNFA.startId, second.startId)
+
+        # Epsilon NFA A end to end 
+        self.createEpsilonTrans(transitionList, first.endId, newNFA.endId)
+
+        # Epsilon NFA B end to end 
+        self.createEpsilonTrans(transitionList, second.endId, newNFA.endId)
+
+        return newNFA
 
     # Kleene Star, Closure      *
     def createClosureTrans(self, transitionList, nfa): # NFA
@@ -275,25 +301,27 @@ class Regex:
     # Regex to NFA creator
     def createNFA(self):
         postFixRegex = "".join(self.infixToPostfixRegex())
-
         # Create Transition list maximum size posible according to regex
         transitionList = []
-        # Pre-populate list with -1 to avoid out of rangeto
-        transitionList = [ [ -1 for i in range(len(set(postFixRegex))) ] for j in range(len(postFixRegex)*2) ] #TODO
+        # Pre-populate list with -1 to avoid out of range
+        transitionList = [ [ [-1 for i in range(1)] for i in range(len(set(postFixRegex))) ] for j in range(len(postFixRegex)*2) ] #TODO
 
         if postFixRegex == '' or postFixRegex == ' ': # empty regex
             # Creates a epsilon trans with states
             newNFA = NFA(len(self.states),len(self.states)+1) # TODO
             self.states.append(len(self.states))
-            self.states.append(len(self.states)+1)
-            transitionList[len(self.states)-2][0].append(len(self.states)-1)
+            self.states.append(len(self.states))
+            transitionList[len(self.states)-2][0][0] = len(self.states)-1
+
             return newNFA
         # Empty Stack
         stack = Stack()
-        
+        print(transitionList)
         for token in postFixRegex:
             if token == "*":        # Star, closure
                 stack.push(self.createClosureTrans(transitionList, stack.pop()))
+            elif token == "+":      # Plus
+                stack.push(self.createPlusTrans(transitionList, stack.pop()))
             elif token == "|":      # Union
                 second = stack.pop()
                 first = stack.pop()
@@ -315,20 +343,18 @@ class Regex:
         
         print("\n Transition List")
         print("\n", transitionList)
-        print("\n Dict Alphabet :")
+        print("\nDict Alphabet :")
         print(self.dictAlphabet)
-        print("\n Transition List :")
+        print("\nTransition List :")
         print(transitionList)
-        print("\n State List :")
+        print("\nState List :")
         print(self.states)
-        print("\n Start State :")
+        print("\nStart State :")
         print(startState)
-        print("\n End State :")
+        print("\nEnd State :")
         print(endState)
-        
-        #return stack.pop() # Only one NFA should be there
-        return [self.states, self.dictAlphabet, transitionList, startState, endState]
 
+        return [self.states, self.dictAlphabet, transitionList, startState, endState]
 class Stack:
     def __init__(self):
         self.items = []
@@ -359,6 +385,6 @@ class Stack:
 
 example_regex = Regex("a*")
 automataTuple = example_regex.createNFA()
-example_automata = Automata(automataTuple[0], automataTuple[1], automataTuple[2], automataTuple[3], automataTuple[4])
+example_automata = Automata(automataTuple[0], automataTuple[1], automataTuple[2], str(automataTuple[3]), [automataTuple[4]])
 
 print(example_automata.convertToDFA())
