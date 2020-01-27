@@ -1,0 +1,12 @@
+digraph finite_state_machine {
+	rankdir=LR
+	node [shape=doublecircle]
+	2
+	3
+	node [shape=circle]
+	0 -> 1 [label=a]
+	1 -> 3 [label=epsilon]
+	1 -> 0 [label=epsilon]
+	2 -> 0 [label=epsilon]
+	2 -> 3 [label=epsilon]
+}

@@ -70,9 +70,10 @@ dictAlphabet = {}           # Dictionary key alphabet, saves column number on tr
 alphabet = set()
 # collections.OrderedDict()
 class NFA:
-    def __init__(self, startId, endId):
+    def __init__(self, startId, endId,tansitionList):
         self.startId = startId
         self.endId = endId
+        self.tl = transitionList
 
 # Just joins two states
 def createEpsilonTrans(transitionList, startId, endId):
@@ -214,6 +215,7 @@ def createNFA(postFixRegex):
     
     print("\n Transition List")
     print("\n", transitionList)
+    tl = transitionList
     print("\nDict Alphabet :")
     print(dictAlphabet)
     print("\nState List :")
@@ -222,7 +224,6 @@ def createNFA(postFixRegex):
     print(startState)
     print("\nEnd State :")
     print(endState)
-
     #return stack.pop() # Only one NFA should be there 
 
 #   infixToPostfixRegex("a.b.c")       # ab.c.
@@ -231,4 +232,4 @@ def createNFA(postFixRegex):
 #   infixToPostfixRegex("a.(b.b)+.c")  # abb.+.c.
 str = "".join(infixToPostfixRegex("((1.0.1)*.0*|(1.1.1.1)*.0*)*"))
 print(str)
-createNFA(str)
+NFA = createNFA(str)

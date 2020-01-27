@@ -390,12 +390,13 @@ class Stack:
 #print(infixToPostfixRegex("a.b.c.c"))
 
 example_regex = Regex("a*")
+example_regex2 = Regex("((1.0.1)*.0*|(1.1.1.1)*.0*)*")
 automataTuple = example_regex.createNFA()
 
 states = ["0", "1", "2", "3"]
 alphabet = ["a"]
 
-#Order of matrix: epsilon, a, b, c
+#Order of matrix: epsilon, a,
 transition_function = [
     [[],["1"]],
     [["3", "0"],[]],
@@ -409,3 +410,36 @@ accept_states = ["3"]
 example_automata = Automata(states, alphabet, transition_function, start_state, accept_states)
 
 print(example_automata.convertToDFA())
+
+
+
+from graphviz import Digraph
+
+f = Digraph('finite_state_machine', filename='NFA.gv')
+f.attr(rankdir='LR')
+
+f.attr('node', shape='doublecircle')
+f.node(start_state)
+
+for state in accept_states:
+    f.node(state)
+
+
+f.attr('node', shape='circle')
+
+for s,state in enumerate(transition_function):
+    #we iterate through all the states
+    for t,transition in enumerate(state):
+        #we iterate through each character in the alphabet
+        for c,character in enumerate(transition):
+            if t%2 == 1:
+                tran = 'a'
+            else:
+                tran = 'epsilon'
+            #print(character,tran)
+
+            if character is not None:
+                f.edge(states[s],character,label=tran)
+            
+
+f.view()
