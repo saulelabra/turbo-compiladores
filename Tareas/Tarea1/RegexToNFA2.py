@@ -188,7 +188,6 @@ def createNFA(postFixRegex):
         return newNFA
     # Empty Stack
     stack = Stack()
-    print(transitionList)
     for token in postFixRegex:
         if token == "*":        # Star, closure
             stack.push(createClosureTrans(transitionList, stack.pop()))
@@ -217,8 +216,6 @@ def createNFA(postFixRegex):
     print("\n", transitionList)
     print("\nDict Alphabet :")
     print(dictAlphabet)
-    print("\nTransition List :")
-    print(transitionList)
     print("\nState List :")
     print(states)
     print("\nStart State :")
@@ -232,6 +229,6 @@ def createNFA(postFixRegex):
 #   infixToPostfixRegex("a.b|c")       # ab.c|
 #   infixToPostfixRegex("a.b+.c")      # ab+.c.
 #   infixToPostfixRegex("a.(b.b)+.c")  # abb.+.c.
-str = "".join(infixToPostfixRegex("a.(b|b)+.c"))
+str = "".join(infixToPostfixRegex("((1.0.1)*.0*|(1.1.1.1)*.0*)*"))
 print(str)
 createNFA(str)
