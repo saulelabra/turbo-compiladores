@@ -394,7 +394,8 @@ example_regex2 = Regex("((1.0.1)*.0*|(1.1.1.1)*.0*)*")
 automataTuple = example_regex.createNFA()
 
 states = ["0", "1", "2", "3"]
-alphabet = ["a"]
+statesi = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29"]
+alphabet = ["e","1","0"]
 
 #Order of matrix: epsilon, a,
 transition_function = [
@@ -432,14 +433,9 @@ for s,state in enumerate(transition_function):
     for t,transition in enumerate(state):
         #we iterate through each character in the alphabet
         for c,character in enumerate(transition):
-            if t%2 == 1:
-                tran = 'a'
-            else:
-                tran = 'epsilon'
-            #print(character,tran)
+            tran = alphabet[t%3]
 
             if character is not None:
                 f.edge(states[s],character,label=tran)
             
-
 f.view()
