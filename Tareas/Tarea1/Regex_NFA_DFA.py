@@ -405,37 +405,42 @@ transition_function = [
     [[],[]]
 ]
 
-start_state = "2"
-accept_states = ["3"]
+tl = [[[-1], [1], [-1], [-1], [-1]], [[2], [-1], [-1], [-1], [-1]], [[-1], [-1], [3], [-1], [-1]], [[4], [-1], [-1], [-1], [-1]], [[-1], [5], [-1], [-1], [-1]], [[7, 0], [-1], [-1], [-1], [-1]], [[0, 7], [-1], [-1], [-1], [-1]], [[10], [-1], [-1], [-1], [-1]], [[-1], [-1], [9], [-1], [-1]], [[11, 8], [-1], [-1], [-1], [-1]], [[8, 11], [-1], [-1], [-1], [-1]], [[27], [-1], [-1], [-1], [-1]], [[-1], [13], [-1], [-1], [-1]], [[14], [-1], [-1], [-1], [-1]], [[-1], [15], [-1], [-1], [-1]], [[16], [-1], [-1], [-1], [-1]], [[-1], [17], [-1], [-1], [-1]], [[18], [-1], [-1], [-1], [-1]], [[-1], [19], [-1], [-1], [-1]], [[21, 12], [-1], [-1], [-1], [-1]], [[12, 21], [-1], [-1], [-1], [-1]], [[24], [-1], [-1], [-1], [-1]], [[-1], [-1], [23], [-1], [-1]], [[25, 22], [-1], [-1], [-1], [-1]], [[22, 25], [-1], [-1], [-1], [-1]], [[27], [-1], [-1], [-1], [-1]], [[6, 20], [-1], [-1], [-1], [-1]], [[29, 26], [-1], [-1], [-1], [-1]], [[26, 29], [-1], [-1], [-1], [-1]], [[-1], [-1], [-1], [-1], [-1]], [[-1], [-1], [-1], [-1], [-1]], [[-1], [-1], [-1], [-1], [-1]], [[-1], [-1], [-1], [-1], [-1]], [[-1], [-1], [-1], [-1], [-1]], [[-1], [-1], [-1], [-1], [-1]], [[-1], [-1], [-1], [-1], [-1]], [[-1], [-1], [-1], [-1], [-1]], [[-1], [-1], [-1], [-1], [-1]], [[-1], [-1], [-1], [-1], [-1]], [[-1], [-1], [-1], [-1], [-1]], [[-1], [-1], [-1], [-1], [-1]], [[-1], [-1], [-1], [-1], [-1]], [[-1], [-1], [-1], [-1], [-1]], [[-1], [-1], [-1], [-1], [-1]]]
 
-example_automata = Automata(states, alphabet, transition_function, start_state, accept_states)
+start_state = "28"
+accept_states = ["29"]
 
-print(example_automata.convertToDFA())
+example_automata = Automata(statesi, alphabet, transition_function, start_state, accept_states)
+
+#print(example_automata.convertToDFA())
 
 
 
 from graphviz import Digraph
 
-f = Digraph('finite_state_machine', filename='NFA.gv')
+f = Digraph('finite_state_machine', filename='NFA')
 f.attr(rankdir='LR')
 
-f.attr('node', shape='doublecircle')
+f.attr('node', shape='circle')
 f.node(start_state)
 
-for state in accept_states:
-    f.node(state)
-
+f.attr('node', shape='doublecircle')
+f.node(accept_states[0])
 
 f.attr('node', shape='circle')
 
-for s,state in enumerate(transition_function):
+for s,state in enumerate(tl):
     #we iterate through all the states
     for t,transition in enumerate(state):
         #we iterate through each character in the alphabet
         for c,character in enumerate(transition):
             tran = alphabet[t%3]
+            #print(tran,character,statesi[s])
+            if(character > 0 and character < 10):
+                f.edge(statesi[s],chr(character+48),label=tran)
+            elif(character > 10):
+                f.edge(statesi[s],chr(character/10+48)+chr(character%10+48),label=tran)
+           
 
-            if character is not None:
-                f.edge(states[s],character,label=tran)
             
 f.view()
