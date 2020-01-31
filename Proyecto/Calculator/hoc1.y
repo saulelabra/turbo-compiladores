@@ -1,19 +1,23 @@
 %{
 #define YYSTYPE double
 %}
-%token NUMBER
+%token NUMBER /* the order affects precedence */
 %left '+' '-'
-%left '*' '/'
+%left '*' '/' '%'
+%left UNARYMINUS UNARYPLUS
 %%
 list:
     | list '\n'
     | list expr '\n' { printf("\t%.8g\n", $2); }
     ;
 expr:   NUMBER          { $$ = $1; }
+        | '+' expr %prec UNARYPLUS { $$ = +$2; }
+        | '-' expr %prec UNARYMINUS { $$ = -$2; }
         | expr '+' expr { $$ = $1 + $3; }
         | expr '-' expr { $$ = $1 - $3; }
         | expr '*' expr { $$ = $1 * $3; }
         | expr '/' expr { $$ = $1 / $3; }
+        | expr '%' expr { $$ = (int)$1 % (int)$3; }
         | '(' expr ')'  { $$ = $2; }
         ;
 %%
