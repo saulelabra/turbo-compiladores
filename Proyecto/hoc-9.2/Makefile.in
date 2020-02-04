@@ -1,0 +1,72 @@
+###############################################################################
+#   @(#)HOC 9.2 makefile, 1.13 Sun Aug 12 23:27:08 IDT 2007
+###############################################################################
+
+@SET_MAKE@
+
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+bindir=@bindir@
+libdir=@libdir@
+
+CC=@CC@
+YACC=@YACC@
+INSTALL=@INSTALL@
+INSTALL_PROGRAM=@INSTALL_PROGRAM@
+
+DEFS=@DEFS@ -DLIBPREFIX="\"$(libdir)/hoc/lib\""
+CFLAGS=@CFLAGS@
+LDFLAGS=@LDFLAGS@
+LIBS=@LIBS@
+LIBOBJS=@LIBOBJS@
+
+
+YFLAGS = -d
+
+OBJS = hoc.o code.o init.o math.o symbol.o memory.o version.o $(LIBOBJS)
+
+all:	hoc
+
+hoc:	$(OBJS)
+	$(CC) $(CFLAGS) $(LD_FLAGS) -o hoc $(OBJS) $(LIBS)
+
+install:	hoc
+	$(INSTALL_PROGRAM) -s hoc $(bindir)
+uninstall:
+	rm -i $(bindir)/hoc
+
+clean:
+	rm -f hoc $(OBJS) $(LIBOBJS) [xy].tab.[cho] hoc.c
+	rm -f mon.out core y.output conflicts.list $(MSOBJS) y.c
+distclean:
+	rm -f hoc $(OBJS) $(LIBOBJS) [xy].tab.[cho] hoc.c
+	rm -f mon.out core y.output conflicts.list $(MSOBJS) y.c
+	rm -f config.cache config.log config.status Makefile
+
+# check for warnings, with gcc
+gcclint:
+	$(CC) -fsyntax-only -Wall -Wstrict-prototypes -Wmissing-prototypes $(CFLAGS) $(DEFS) code.c gamma.c hoc.c init.c math.c memory.c symbol.c version.c
+
+######################################################################
+
+hoc.c:	hoc.y
+	$(YACC) $(YFLAGS) hoc.y
+	mv y.tab.c hoc.c
+
+y.c:	hoc.y
+	rm -f y.c
+	$(YACC) $(YFLAGS) hoc.y
+
+hoc.o code.o init.o symbol.o memory.o:	hoc.h
+code.o init.o symbol.o: x.tab.h
+x.tab.h:	y.tab.h
+	@-cmp -s x.tab.h y.tab.h || cp y.tab.h x.tab.h
+
+.c.o:
+	$(CC) -c $(CFLAGS) $(DEFS) $<
+######################################################################
+#MSOBJS = y.obj code.obj init.obj math.obj symbol.obj memory.obj gamma.obj \
+#	 version.obj
+#MSLIBS = $(MSLIBDIR)setargv.obj $(MSLIBDIR)binmode.obj
+#hoc.exe:	$(MSOBJS)
+#	$(CC) $(CFLAGS) -o hoc $(MSOBJS) $(MSLIBS) /LINK /NOE

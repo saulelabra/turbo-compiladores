@@ -1,0 +1,208 @@
+Changes in Hoc 9.2: (September 10, 2008)
+-------------------
+
+* Traditionally in hoc, functions refer to their arguments by number, as in
+  	func divide(){ return $1/$2 }
+  Added a new syntax for naming (some of) the arguments, as in
+ 	 func divide(a,b){ return a/b }
+  Both syntaxes remain valid, and in fact can even be mixed, as in
+	  func divide(a){ return a/$2 }
+  This sort of mixture is especially useful for functions with variable number
+  of arguments, where only the first mandatory few are named.
+  All of the above is true also for procedures, of course.
+
+* On recent Linux systems, Hoc would block the interrupt signal after one
+  time of catching it. Fixed this bug, and now the interrupt (often, ^C
+  or delete key) work as intended, every time.
+
+* Avoid "warning: cast to pointer from integer of different size" on some
+  recent compilers and cpus like x86_64 where integer and pointer size are
+  different.
+
+
+User-visible changes between the book version and NYH Hoc 9.1.2:
+----------------------------------------------------------------
+
+* The variable "_" contains the result of the last top-level expression
+  evaluation, so you can re-use intermediate values without re-typing them.
+
+* A "for" statement was added, with the same syntax as in C. Just like in C,
+  each of the three components is optional. As in ANSI C, the first component
+  may even include a declaration (as in "local i=0").
+
+* Hoc now has local variables in functions and procedures. A local variable
+  is declared with the assigment "local var=value", or "local var" (with
+  value defaulting to 0).
+
+* The && and || used to always evaluate both operands. Now they short-circuit
+  as in C, i.e., they don't evaluate the second operand if it isn't needed to
+  decide the value of the expression.
+
+* Added a ternary operator 'valt ? cond | valf', which does the same thing
+  as the C operator 'cond ? valt : valf' (return valt if cond is true, or
+  valf if cond is false). Like the C operator, this one also short-circuits
+  (always evaluates just one of the operands valt or valf).
+  Note that the operand order is different than in C. The operand order and
+  the use of the '|' character makes this operator readable like English;
+  For example, the expression
+      1?cond1 | 2?cond2 | 3
+  equals 1 if cond1, or 2 if cond2, or else 3.
+
+* Constant variables can be declared, with the "const var=value" assignment.
+  When a constant variable is used in a loop or a function body, its value is
+  retrieved just once when the code is parsed - not every time around the loop
+  or every time the function is called.
+  A constant can be reassigned a different value with another "const var=value"
+  command, but this assignment will, as explained above, not affect functions
+  that were previously defined and used this constant.
+  Hoc's builtin constants, PI, E, GAMMA, DEG, and PHI, are now consts.
+
+* ++ and -- operators added. These have prefix and postfix versions, with
+  semantics exactly like in C. They work on both variables and function
+  arguments ($1, etc.)
+
+* Two modulo operator, % and mod, were added. %'s behavior when the first
+  argument is negative is like that of C's % operator, or its fmod() function:
+  -1 % 5 comes out -1. The "mod" operator behaves more sensibly: -1 mod 5
+  comes out 4.
+
+* Function and procedure arguments can now be reassigned, just like variables,
+  e.g., $1 = 3. However, you can only assign a new value to an existing
+  argument - e.g., $1=3 will cause an error if the function was not given
+  an argument.
+
+* +=, -=, *=, /=, ^= and %= assignment operators added, and behave as in
+  C (e.g., a += b means a = a+b). These assignments work on both variables
+  and function arguments ($1, etc.).
+ 
+* The DIGITS variable controls the number of significant digits printed.
+  This defaults to 6, as in the original hoc. Note that this variable affects
+  only printouts - the actual calculation is still done in the machine's
+  default double-precision accuracy (usually, 15 digits of precision).
+
+* New builtin math functions: logamma, sinh, cosh, tanh, asin, acos,
+  csc, sec, cot.
+
+* New builtin function floor(), similar to int(), but behaves differently for
+  negatives: int(-3.4)=-3, while floor(-3.4)=-4.
+  
+* New builtin function time(), returning the number number of seconds since
+  the epoch (like C's time function). Because all Hoc's builtin functions
+  take one argument, time() does too, but ignores it.
+
+* New builtin functions for random number generation. rnd(limit) returns
+  a random integer between 0 and limit-1, inclusive. randomize(seed) changes
+  the random number seed. Note that unless you call randomize(), the seed
+  starts out the same for every run of Hoc.
+
+* Hoc now supports functions and procedures with variable number of arguments.
+  This is achieved with a new builtin function arg(i), returning the i'th
+  argument, and $#, returning the number of arguments.
+
+* There's a new 'include "file"' statement to include another file (typically
+  defining useful functions). If you use the file name "-lname" in an include
+  statement or in hoc's command line, the file is taken from hoc's default
+  library directory (by default, "-la" expands to /usr/local/lib/hoc/liba).
+
+* Interrupts are caught; Use Control-D or the new "exit" command (or "quit"
+  or "bye") to exit.
+
+* The ';' character can now be used, just like a newline, between statements.
+  Like the original hoc and unlike C, the ';' is not mandatory.
+
+* C-like comments, /* ... */, are now ignored.
+  Additionally, when reading commands from a file (but not interactively),
+  lines that start with "." are ignored. This can be used to mix a hoc program
+  with troff formatting, for a nice printout.
+
+* \ at the end of line eats newline.
+
+* There is now a prompt, "hoc> ", in interactive hoc sessions.
+
+* The new "abort" statement aborts hoc's currently executing expression. It can
+  be used in functions that encountered an error and cannot return a value.
+
+* The new "eof" statement causes hoc to stop reading its current input file.
+  
+* The new statement 'cd "directory"' changes hoc's current working directory.
+
+* It is now possible to change the flow of loops (while and for) with the
+  new "continue" and "break" statements. These work similarly to the C
+  namesakes, except that like their Bourne Shell namesakes, they take an
+  optional expression: "break 2" means break out of two enclosing loops, and
+  "continue 2" means continue the second enclosing loop (i.e., break out of
+  the direct enclosing loop, and continue the second).
+
+* Using a function or procedure name without following it with arguments
+  (in parantheses), now calls this function or procedure without arguments,
+  I.e.., 'f' is now another way to write 'f()'.
+
+* The new syntax callproc(name, args...) and callfunc(name, args) are
+  equivalent to name(args...), but is accepted as valid syntax even if name is
+  not yet be a function or procedure at the time of parsing.
+
+* The new operator ~~ checks for approximate equality: a~~b if abs(a-b)<=ERROR.
+  The ERROR variable defaults to 1e-06, but this can be changed by the program.
+  A function may even "local" ERROR, to change it only inside the function.
+  The operator !~ checks for approximate inequality: a!~b if abs(a-b)>=ERROR.
+  Note that under this definition, it is possible that a~~b && a!~b (when
+  abs(a-b)==ERROR exactly).
+
+* There's a new "set" statement for changing some of hoc's default behaviors:
+  'set "ignoreundef"' causes undefined variables to have the value of 0 when
+  used (instead of the default 'set "noignoreundef"', causing an error).
+  'set "tracecalls"' causes calls and returns from functions and procedures
+  to be displayed (for debugging purposes). 'set "allnames"' modifies the
+  behavior of the "names" statement (see below). The statement 'set all'
+  shows all the current settings. The statement 'set' shows just the settings
+  that have changed from the default.
+  The statement 'set "@=..."' is used to change the @ prefix (see below).
+
+* The new "names" statement shows all currently defined identifiers (variables,
+  constants, keywords, functions, procedures and builtin functions).
+  By default, names beginning with the underscore character (_) are hidden,
+  but this can be changed by the 'set "allnames"' setting.
+
+* There's new rudementary support for namespaces, or file-local variables.
+  It works by choosing a unique prefix with the 'set "@=helloworld"'
+  command, and then using indentifiers beginning with @, like @i which is
+  expanded to helloworldi. The unique prefix should typically be long, and
+  start with an underscore (so that the 'names' command doesn't show these
+  identifiers). It is interesting to note that the @ prefix is NOT limited to
+  the standard identifier character set (alphanumeric or underscore), and may
+  contain any characters whatsoever.
+
+* New statement 'sh "command ..."' runs an shell command.
+
+* Added a new type(identifier) expression. The value of this expression
+  depends on the type of this identifier when the expression is evaluated
+  (not at the time it was first parsed). Type can be the constant T_VAR
+  is the identifier is a global variable, T_LOCAL if it is a local variable,
+  T_FUNC if it is a function, T_PROC if it is a procedure, T_BLTIN for a
+  builtin function, and T_KEYWORD for a reserved keyword.
+  The type function has two bugs: First, it returns T_KEYWORD for consts.
+  Second, it returns T_LOCAL even for variables that are not local in this
+  function, but are local in a function that called this one.
+
+* The new constant OSTYPE gives the OS type. It is equal to OS_UNIX on
+  Unix-like machines, and OS_DOS on DOS.
+
+* The new "version" statement prints information about this Hoc version.
+
+* The new "level" statement prints debugging information about the current
+  recursion depth and stack usage (the stack is used in hoc to hold function
+  arguments).
+
+* It is no longer possible to define a function or procedure with a name of
+  an existing variable.
+
+Compiling and Installing
+------------------------
+
+First run configure, to generate the Makefile.
+
+Then, compile and install hoc:
+
+	make
+
+	make install

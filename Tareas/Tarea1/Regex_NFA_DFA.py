@@ -436,9 +436,9 @@ for s,state in enumerate(tl):
         for c,character in enumerate(transition):
             tran = alphabet[t%3]
             #print(tran,character,statesi[s])
-            if(character > 0 and character < 10):
+            if(character >= 0 and character < 10):
                 f.edge(statesi[s],chr(character+48),label=tran)
-            elif(character > 10):
+            elif(character > 9):
                 f.edge(statesi[s],chr(character/10+48)+chr(character%10+48),label=tran)
            
 

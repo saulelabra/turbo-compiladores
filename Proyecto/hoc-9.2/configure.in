@@ -1,0 +1,76 @@
+dnl Process this file with autoconf to produce HOC's configure script.
+
+dnl ** code.c is any file in the source directory, used to check the source is
+dnl ** indeed located in the specied directory.
+AC_INIT(code.c)
+
+dnl Checks for programs.
+
+dnl ** this allows us to use $(MAKE) in the makefile, even if our make program
+dnl ** doesn't support this variable. This requires putting @SET_MAKE@ in
+dnl ** the Makefile.in
+AC_PROG_MAKE_SET
+
+AC_PROG_CC
+AC_PROG_INSTALL
+AC_PROG_YACC
+
+dnl Checks for libraries.
+dnl check for math library including the "sin" routine (which is arbitrary
+dnl routine we know must be in the library).
+AC_CHECK_LIB(m, sin)
+
+dnl Checks for header files.
+AC_HEADER_STDC
+dnl AC_CHECK_HEADERS(malloc.h)
+
+dnl Checks for typedefs, structures, and compiler characteristics.
+AC_C_CONST
+AC_TYPE_SIGNAL
+
+dnl ** Check if the pointer size is different from int's. If it is, try to
+dnl ** if perhaps "long" is the same length as a pointer. If it is not, just
+dnl ** forget it. The macro pointer_sized_int we set here is used in INSTTOI
+dnl ** and ITOINST in hoc.h - see comments there why it is needed.
+AC_MSG_CHECKING([for pointer size matches long, not int])
+AC_TRY_RUN([
+typedef void SMI;
+typedef SMI (*Inst)();
+main(){
+	exit(sizeof(int)!=sizeof(SMI) && sizeof(long)==sizeof(SMI));
+}
+],AC_DEFINE(pointer_sized_int,long) AC_MSG_RESULT(yes),AC_MSG_RESULT(no),)
+
+
+dnl Checks for library functions.
+
+dnl ** the log-gamma is available as gamma,lgamma, or not at all (in which case
+dnl ** we shall use a stub in gamma.c)
+AC_CHECK_FUNCS(lgamma,break,[AC_CHECK_FUNCS(gamma,,[AC_LIBOBJ(gamma)])])
+
+AC_CHECK_FUNCS(matherr)
+AC_CHECK_FUNCS(siglongjmp)
+
+dnl Run time checks for known compiler bugs.
+dnl This was mostly relevant in the old days of Unix, where users of a buggy
+dnl compiler were stuck with it. Today, with free software and GCC, users
+dnl will upgrade their buggy compilers, and they're not likely to affect hoc.
+
+dnl ****************** check for bug found on AIX 2.3 native C compiler.
+AC_MSG_CHECKING([for compiler bug (*(*pc++))()])
+AC_TRY_RUN([
+typedef void SMI;
+typedef SMI (*Inst)();
+SMI f();
+Inst prog[17], *pc=prog;
+main(){
+	prog[0]=f;
+	(*(*pc++))();
+}
+SMI f(){
+	exit(pc!=prog);
+}
+],AC_DEFINE(COMPILER_BUG_INCR) AC_MSG_RESULT(yes),AC_MSG_RESULT(no),AC_DEFINE(COMPILER_BUG_INCR))
+
+
+AC_OUTPUT(Makefile)

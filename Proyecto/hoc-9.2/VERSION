@@ -1,0 +1,17 @@
+HOC Release 9.2 (Revision 145)
+Wed Sep 10 23:35:14 IDT 2008
+
+Source files:
+-------------
+code.c 9.14 	(Wed Sep 10 01:26:13 IDT 2008)
+hoc.y 9.25 	(Wed Sep 10 01:26:31 IDT 2008)
+init.c 9.2 	(Tue Dec  9 21:59:11 IST 1997)
+math.c 9.5 	(Fri Mar 28 00:20:44 IDT 1997)
+memory.c 9.2 	(Thu Mar 27 23:11:54 IDT 1997)
+symbol.c 9.2 	(Mon Jun 27 22:06:15 IDT 2005)
+hoc.h 9.10 	(Wed Sep 10 23:24:23 IDT 2008)
+gamma.c 8.1 	(Fri Apr  4 16:48:11 IDT 1997)
+configure.in 1.13 	(Wed Sep 10 01:26:21 IDT 2008)
+Makefile.in 1.13 	(Sun Aug 12 23:27:08 IDT 2007)
+README 9.3 	(Wed Sep 10 00:25:13 IDT 2008)
+WHATSNEW 9.5 	(Wed Sep 10 23:35:10 IDT 2008)
