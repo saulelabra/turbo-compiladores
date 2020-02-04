@@ -61,6 +61,13 @@ varpush() /* push variable onto stack  */
     push(d);
 }
 
+prexpr()
+{
+    Datum d;
+    d = pop();
+    printf("%.8g\n", d.val);
+}
+
 add()
 {
     Datum d1, d2;
@@ -151,3 +158,111 @@ bltin()
     push(d);
 }
 
+gt()
+{
+    Datum d1, d2;
+    d2 = pop();
+    d1 = pop();
+    d1.val = (double)(d1.val > d2.val);
+    push(d1);   
+}
+
+lt()
+{
+    Datum d1, d2;
+    d2 = pop();
+    d1 = pop();
+    d1.val = (double)(d1.val < d2.val);
+    push(d1);   
+}
+
+eq()
+{
+    Datum d1, d2;
+    d2 = pop();
+    d1 = pop();
+    d1.val = (double)(d1.val == d2.val);
+    push(d1);   
+}
+
+ge()
+{
+    Datum d1, d2;
+    d2 = pop();
+    d1 = pop();
+    d1.val = (double)(d1.val >= d2.val);
+    push(d1);    
+}
+
+le()
+{
+    Datum d1, d2;
+    d2 = pop();
+    d1 = pop();
+    d1.val = (double)(d1.val <= d2.val);
+    push(d1);
+}
+
+ne()
+{
+    Datum d1, d2;
+    d2 = pop();
+    d1 = pop();
+    d1.val = (double)(d1.val != d2.val);
+    push(d1);   
+}
+
+and()
+{
+    Datum d1, d2;
+    d2 = pop();
+    d1 = pop();
+    d1.val = (double)(d1.val && d2.val);
+    push(d1);   
+}
+
+or()
+{
+    Datum d1, d2;
+    d2 = pop();
+    d1 = pop();
+    d1.val = (double)(d1.val || d2.val);
+    push(d1);   
+}
+
+not()
+{
+    Datum d1;
+    d1 = pop();
+    d1.val = (double)(-d1.val);
+    push(d1);   
+}
+
+whilecode()
+{
+    Datum d;
+    Inst savepc = pc; /* loop body */
+    
+    execute(savepc+2);
+    d = pop();
+    while(d.val) {
+        execute(*((Inst**)(savepc))); /* body */
+        execute(savepc+2);
+        d = pop();
+    }
+    pc = *((Inst **)(savepc+1)); /* next statement */
+}
+
+ifcode()
+{
+    Datum d;
+    Inst *savepc = pc; /* then part */
+
+    execute(savepc+3); /* condition */
+    d = pop();
+    if(d.val)
+        execute(*((Inst **)(savepc)));
+    else if (*((Inst **)(savepc+1))) /* else part */
+        execute(*((Inst **)(savepc+1)));
+    pc = *((Inst **)(savepc+2)); /* next statement */
+}

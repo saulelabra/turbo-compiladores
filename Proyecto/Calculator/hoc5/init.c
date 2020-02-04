@@ -30,6 +30,17 @@ static struct {
     0, 0
 };
 
+static struct {
+    char    *name;
+    int     kval;
+} keywords[] = {
+    "if",   IF,
+    "else", ELSE,
+    "while",WHILE,
+    "print",PRINT,
+    0,     0,
+};
+
 init()
 {
     int i;
