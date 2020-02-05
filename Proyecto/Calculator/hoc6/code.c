@@ -357,7 +357,7 @@ argassign() /* store top of the stack */
     *getarg() = d.val;
 }
 
-prestr() /* prints string value */
+prstr() /* prints string value */
 {
     printf("%s", (char *) *pc++);
 }
