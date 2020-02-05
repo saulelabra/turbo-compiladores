@@ -114,17 +114,6 @@ yylex()
 {
     int c;
 
-    switch(c) {
-        case '>': return follow('=', GE, GT);
-        case '<': return follow('=', LE, LT);
-        case '=': return follow('=', EQ, '=');
-        case '!': return follow('=', NE, NOT);
-        case '|': return follow('|', OR, '|');
-        case '&': return follow('&', AND, '&');
-        case '\n': lineno++; return '\n';
-        default: return c;
-    }
-
     while((c=getchar()) == ' ' || c == '\t')
         ;
     if(c == EOF)
@@ -152,7 +141,16 @@ yylex()
         return s->type == UNDEF ? VAR : s->type;
     }
 
-    return c;
+    switch(c) {
+        case '>': return follow('=', GE, GT);
+        case '<': return follow('=', LE, LT);
+        case '=': return follow('=', EQ, '=');
+        case '!': return follow('=', NE, NOT);
+        case '|': return follow('|', OR, '|');
+        case '&': return follow('&', AND, '&');
+        case '\n': lineno++; return '\n';
+        default: return c;
+    }
 }
 
 follow(expect, ifyes, ifno)

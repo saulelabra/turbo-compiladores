@@ -52,4 +52,6 @@ init()
         s = install(builtins[i].name, BLTIN, 0.0);
         s->u.ptr = builtins[i].func;
     }
+    for(i = 0; keywords[i].name; i++)
+        install(keywords[i].name, keywords[i].kval, 0.0);
 }

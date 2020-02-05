@@ -241,7 +241,7 @@ not()
 whilecode()
 {
     Datum d;
-    Inst savepc = pc; /* loop body */
+    Inst *savepc = pc; /* loop body */
     
     execute(savepc+2);
     d = pop();
