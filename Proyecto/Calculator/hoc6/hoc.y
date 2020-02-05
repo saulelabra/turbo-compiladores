@@ -130,9 +130,9 @@ char *infile;
 FILE *fin;
 char **gargv;
 int gargc;
-int c;
+int c; // used by yylex
 
-main(argc, argv)
+main(argc,  argv)
     char *argv[];
 {
     int i, fpecatch();
@@ -155,22 +155,17 @@ main(argc, argv)
     return 0;
 }
 
-execerror(s, t) /* recover from runtime error */
-    char *s, *t;
-{
+execerror(char *s, char *t){ /* recover from runtime error */
     warning(s, t);
+    fseek(fin, 0L, 2)
     longjmp(begin, 0);
 }
 
-fpecatch() /* catch floating point exceptions */
-{
+fpecatch(){ /* catch floating point exceptions */
     execerror("floating point exception", (char *) 0);
 }
 
-yylex()
-{
-    int c;
-
+yylex(){
     while((c=getchar()) == ' ' || c == '\t')
         ;
     if(c == EOF)
@@ -238,49 +233,54 @@ yylex()
     }
 }
 
-follow(expect, ifyes, ifno)
-{
-    int c = getchar();
+follow(expect, ifyes, ifno){
+    int c = getc(fin);
 
-    if(c == expect)
+    if(c == expect){
         return ifyes;
-    ungetc(c, stdin);
+    }
+    ungetc(c, fin);
     return ifno;
 }
 
-defnonly(s)
-    char *s;
-{
-    if (!indef)
+defnonly(char *s){
+    if (!indef){
         execerror(s, "used outside definition");
+    }
 }
 
-backslash(c)
-    int c;
-{
+backslash(int c){
     char *index();
     static char transtab[] = "b\bf\fn\nr\rt\t";
-    if(c != '\\')
+    if(c != '\\'){
         return c;
+    }
     c = getc(fin);
-    if(islower(c) && index(transtab, c))
+    if(islower(c) && index(transtab, c)){
         return index(transtab, c)[1];
+    }
     return c;
 }
 
-yyerror(s)
-    char *s;
-{
+yyerror(char *s){
     warning(s, (char *) 0);
 }
 
-warning(s, t)
-    char *s, *t;
-{
+warning(char *s, char *t){
     fprintf(stderr, "%s: %s", progname, s);
-    if(t)
-        printf(stderr, " %s", t);
+    if(t){
+        fprintf(stderr, " %s", t);
+    }
+    if(infile){
+        fprintf(stderr, "in %s", infile);
+    }
     fprintf(stderr, " near line %d\n", lineno);
+    while(c != '\n' && c != EOF){
+        c = getc(fin);
+    }
+    if(c == '\n'){
+        lineno++;
+    }
 }
 
 run(){
