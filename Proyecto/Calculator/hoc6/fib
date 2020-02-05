@@ -1,8 +1,6 @@
-
 proc fib(){
 	a = 0
 	b = 1
-
 	while (b < $1) {
 		print b
 		c = b
@@ -11,3 +9,4 @@ proc fib(){
 	}
 	print "\n"
 }
+
