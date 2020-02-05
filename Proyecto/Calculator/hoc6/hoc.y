@@ -96,25 +96,25 @@ expr:   NUMBER  { $$ = code2(constpush, (Inst)$1); }
         | expr OR expr { code(or); }
         | NOT expr     { $$ = $2; code(not); }
         ;
-begin:  { $$ = progp; }
+begin:                          { $$ = progp; }
         ;
-prlist: expr    {code(prexpr);}
-        | STRING    { $$ = code2(prstr, (Inst)$1);}
-        | prlist ',' expr {code(prexpr);}
-        | prlist ',' STRING {code2(prstr, (Inst)$3);}
+prlist: expr                    { code(prexpr);}
+        | STRING                { $$ = code2(prstr, (Inst)$1);}
+        | prlist ',' expr       { code(prexpr);}
+        | prlist ',' STRING     { code2(prstr, (Inst)$3);}
         ;
-defn: FUNC procname { $2->type=FUNCTION; indef=1; }
-            '(' ')' stmt { code(procret); define($2); indef=0; }
-        | PROC procname { $2->type=PROCEDURE; indef=1; }
-            '(' ')' stmt {code(procret); define($2); indef=0; }
+defn:   FUNC procname           { $2->type=FUNCTION; indef=1; }
+            '(' ')' stmt        { code(procret); define($2); indef=0; }
+        | PROC procname         { $2->type=PROCEDURE; indef=1; }
+            '(' ')' stmt        { code(procret); define($2); indef=0; }
         ;
 procname: VAR
         | FUNCTION
         | PROCEDURE
         ;
-arglist:    { $$ = 0; }
-        | expr  { $$ = 1; }
-        | arglist ',' expr { $$ = $1 + 1; }
+arglist:                        { $$ = 0; }
+        | expr                  { $$ = 1; }
+        | arglist ',' expr      { $$ = $1 + 1; }
         ;
 %%
 
