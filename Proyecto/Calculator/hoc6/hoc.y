@@ -193,7 +193,7 @@ yylex()
 
     if(c =='"') { /* quoted string */
         char sbuf[100], *p, *emalloc();
-        for(p = sbuf; (c=getc(fin)) != '"', p++){
+        for(p = sbuf; (c=getc(fin)) != '"'; p++){
             if(c == '\n' || c == EOF)
                 execerror("missing quote", "");
             if(p >= sbuf + sizeof(sbuf) - 1) {
