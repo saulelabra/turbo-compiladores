@@ -21,7 +21,7 @@ typedef int (*Inst)();
 #define STOP (Inst) 0
 
 extern Inst prog[], *progp, *progbase, *code();
-extern eval(), add(), sub(), mul(), div(), negate(), power();
+extern eval(), add(), sub(), mul(), div(), negate(), power(), plusate(), modulate();
 extern assign(), bltin(), varpush(), constpush(), print(), varread();
 extern prexpr(), prstr();
 extern gt(), lt(), eq(), ge(), le(), ne(), and(), or(), not();

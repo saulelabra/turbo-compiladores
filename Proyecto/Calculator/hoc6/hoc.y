@@ -83,7 +83,9 @@ expr:   NUMBER  { $$ = code2(constpush, (Inst)$1); }
         | expr '*' expr { code(mul); }
         | expr '/' expr { code(div); }
         | expr '^' expr { code(power); }
+        | expr '%' expr { code(modulate); }
         | '-' expr %prec UNARYMINUS { $$ = $2; code(negate); }
+        | '+' expr %prec UNARYPLUS { $$ = $2; code(plusate); }
         | expr GT expr { code(gt); }
         | expr GE expr { code(ge); }
         | expr LT expr { code(lt); }

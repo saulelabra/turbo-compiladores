@@ -3,7 +3,7 @@
 #include <math.h>
 
 extern double Log(), Log10(), Exp(), Sqrt(), integer();
-static struct {
+static struct { // Constants
     char *name;
     double cval;
 } consts[] = {
@@ -45,16 +45,17 @@ static struct {
     0,     0,
 };
 
-init()
-{
+init(){
     int i;
     Symbol *s;
 
-    for(i = 0; keywords[i].name; i++)
+    for( i = 0; keywords[i].name; i++){
         install(keywords[i].name, keywords[i].kval, 0.0);
-    for(i=0; consts[i].name; i++)
+    }
+    for( i = 0; consts[i].name; i++){
         install(consts[i].name, VAR, consts[i].cval);
-    for(i=0; builtins[i].name; i++){
+    }
+    for( i = 0; builtins[i].name; i++){
         s = install(builtins[i].name, BLTIN, 0.0);
         s->u.ptr = builtins[i].func;
     }
