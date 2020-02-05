@@ -237,7 +237,7 @@ follow(expect, ifyes, ifno)
 }
 
 defnonly(s)
-    char *s
+    char *s;
 {
     if (!indef)
         execerror(s, "used outside definition");
