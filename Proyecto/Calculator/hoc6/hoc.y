@@ -2,6 +2,7 @@
 #include "hoc.h"
 #define code2(c1,c2) code(c1); code(c2)
 #define code3(c1,c2,c3) code(c1); code(c2); code(c3)
+int indef;
 %}
 %union {
     Symbol *sym; /* Symbol table pointer */
@@ -122,7 +123,7 @@ arglist:    { $$ = 0; }
 jmp_buf begin;
 char  *progname;
 int lineno = 1;
-int indef;
+
 char *infile;
 FILE *fin;
 char **gargv;
@@ -269,4 +270,34 @@ warning(s, t)
     if(t)
         printf(stderr, " %s", t);
     fprintf(stderr, " near line %d\n", lineno);
+}
+
+run(){
+    setjmp(begin);
+    signal(SIGFPE, fpecatch);
+    for(initcode(); yyparse(); initcode()){
+        execute(progbase);
+    }
+}
+
+moreinput(){
+    if(gargc-- <= 0){
+        return 0;
+    }
+
+    if(fin && fin != stdin){
+        fclose(fin);
+    }
+    infile = *gargv++;
+    lineno =  1;
+
+    if(strcmp(infile, "-") == 0){
+        fin = stdin;
+        infile = 0;
+    }else if((fin = fopen(infile, "r")) == NULL){
+        fprintf(stderr, "%s: cant open %s\n", progname, infile);
+        return moreinput();
+    }
+
+    return 1;
 }

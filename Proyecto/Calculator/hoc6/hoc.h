@@ -20,7 +20,7 @@ extern Datum pop();
 typedef int (*Inst)();
 #define STOP (Inst) 0
 
-extern Inst prog[], *progp, *code();
+extern Inst prog[], *progp, *progbase, *code();
 extern eval(), add(), sub(), mul(), div(), negate(), power();
 extern assign(), bltin(), varpush(), constpush(), print(), varread();
 extern prexpr(), prstr();

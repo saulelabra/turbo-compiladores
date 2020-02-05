@@ -1,5 +1,7 @@
 #include "hoc.h"
 #include "y.tab.h"
+#include <stdio.h>
+
 
 #define NSTACK 256
 static Datum stack[NSTACK]; /* the stack */
@@ -361,12 +363,6 @@ prestr() /* prints string value */
     printf("%s", (char *) *pc++);
 }
 
-prexpr() /* print numeric value */
-{
-    Datum d;
-    d = pop();
-    printf("%.8g ", d.val);
-}
 
 varread() /* read into variable */
 {
