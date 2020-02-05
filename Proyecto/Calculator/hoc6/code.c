@@ -2,7 +2,6 @@
 #include "y.tab.h"
 #include <stdio.h>
 
-
 #define NSTACK 256
 static Datum stack[NSTACK]; /* the stack */
 static Datum *stackp; /* next free spot on the stack */

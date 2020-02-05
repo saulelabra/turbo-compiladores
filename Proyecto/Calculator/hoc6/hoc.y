@@ -35,12 +35,12 @@ list:   /* nothing */
         ;
 asgn:   VAR '=' expr { code3(varpush, (Inst)$1, assign); $$=$3; }
         | ARG '=' expr
-            { defonly("$"); code2(argassign, (Inst)$1); $$=$3; }
+            { defnonly("$"); code2(argassign, (Inst)$1); $$=$3; }
         ;
 stmt:   expr    { code(pop); }
         | RETURN { defnonly("return"); code(procret); }
         | RETURN expr
-            { denonly("return"); $$=$2; code(funcret); }
+            { defnonly("return"); $$=$2; code(funcret); }
         | PROCEDURE begin '(' arglist ')'
             { $$ = $2; code3(call, (Inst)$1, (Inst)$1);}
         | PRINT prlist { $$ = $2; }
