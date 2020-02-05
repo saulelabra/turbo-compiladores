@@ -22,7 +22,8 @@ typedef int (*Inst)();
 
 extern Inst prog[], *progp, *code();
 extern eval(), add(), sub(), mul(), div(), negate(), power();
-extern assign(), bltin(), varpush(), constpush(), print();
-extern prexpr();
+extern assign(), bltin(), varpush(), constpush(), print(), varread();
+extern prexpr(), prstr();
 extern gt(), lt(), eq(), ge(), le(), ne(), and(), or(), not();
-extern ifcode(), whilecode();
+extern ifcode(), whilecode(), call(), arg(), argassign();
+extern funcret(), procret();
