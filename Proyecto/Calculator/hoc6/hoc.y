@@ -93,23 +93,23 @@ expr:   NUMBER  { $$ = code2(constpush, (Inst)$1); }
         | expr OR expr { code(or); }
         | NOT expr     { $$ = $2; code(not); }
         ;
-    begin:  { $$ = progp; }
+begin:  { $$ = progp; }
         ;
-    prlist: expr    {code(prexpr);}
+prlist: expr    {code(prexpr);}
         | STRING    { $$ = code2(prstr, (Inst)$1);}
         | prlist ',' expr {code(prexpr);}
         | prlist ',' STRING {code2(prstr, (Inst)$3);}
         ;
-    defn: FUNC procname { $2->type=FUNCTION; indef=1; }
+defn: FUNC procname { $2->type=FUNCTION; indef=1; }
             '(' ')' stmt { code(procret); define($2); indef=0; }
         | PROC procname { $2->type=PROCEDURE; indef=1; }
             '(' ')' stmt {code(procret); define($2); indef=0; }
         ;
-    procname: VAR
+procname: VAR
         | FUNCTION
         | PROCEDURE
         ;
-    arglist:    { $$ = 0; }
+arglist:    { $$ = 0; }
         | expr  { $$ = 1; }
         | arglist ',' expr { $$ = $1 + 1; }
         ;
@@ -122,6 +122,12 @@ expr:   NUMBER  { $$ = code2(constpush, (Inst)$1); }
 jmp_buf begin;
 char  *progname;
 int lineno = 1;
+int indef;
+char *infile;
+FILE *fin;
+char **gargv;
+int gargc;
+int c;
 
 main(argc, argv)
     char *argv[];
@@ -198,7 +204,7 @@ yylex()
                 execerror("missing quote", "");
             if(p >= sbuf + sizeof(sbuf) - 1) {
                 *p = '\0';
-                execerror("string too long", sbuf)
+                execerror("string too long", sbuf);
             }
             *p = backslash(c);
         }
