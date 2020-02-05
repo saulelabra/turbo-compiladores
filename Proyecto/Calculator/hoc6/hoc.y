@@ -133,14 +133,23 @@ int c;
 main(argc, argv)
     char *argv[];
 {
-    int fpecatch();
+    int i, fpecatch();
 
     progname = argv[0];
+    
+    if (argc == 1){
+        static char *stdinonly[] = { "-" };
+        gargv = stdinonly;
+        gargc = 1;
+    }else{
+        gargv = argv+1;
+        gargc = argc-1;
+    }
     init();
-    setjmp(begin);
-    signal(SIGFPE, fpecatch);
-    for(initcode(); yyparse(); initcode())
-        execute(prog);
+    while(moreinput()){
+        run();
+    }
+
     return 0;
 }
 
