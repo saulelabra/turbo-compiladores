@@ -166,16 +166,17 @@ fpecatch(){ /* catch floating point exceptions */
 }
 
 yylex(){
-    while((c=getchar()) == ' ' || c == '\t')
+    while((c=getc(fin)) == ' ' || c == '\t')
         ;
-    if(c == EOF)
+    if(c == EOF){
         return 0;
+    }
 
     if(c == '.' || isdigit(c)) {
         double d;
-        ungetc(c, stdin);
-        scanf("%lf%", &d);
-        yylval.sym = install ("", NUMBER, d);
+        ungetc(c, fin);
+        fscanf(fin, "%lf%", &d);
+        yylval.sym = install("", NUMBER, d);
         return NUMBER;
     }
 
@@ -183,23 +184,30 @@ yylex(){
         Symbol *s;
         char sbuf[100], *p = sbuf;
         do {
+            if( p >= sbuf + sizeof(sbuf) - 1){
+                *p = '\0';
+                execerror("name too long", sbuf);
+            }
             *p++ = c;
-        } while ((c= getchar()) != EOF && isalnum(c));
-        ungetc(c, stdin);
+        } while ((c= getc(fin)) != EOF && isalnum(c));
+        ungetc(c, fin);
         *p = '\0';
-        if((s=lookup(sbuf)) == 0)
+        if((s=lookup(sbuf)) == 0){
             s = install(sbuf, UNDEF, 0.0);
+        }
         yylval.sym = s;
         return s->type == UNDEF ? VAR : s->type;
     }
 
     if(c == '$') { /* argument? */
         int n = 0;
-        while(isdigit(c=getc(fin)))
+        while(isdigit(c=getc(fin))){
             n = 10 * n + c - '0';
+        }
         ungetc(c, fin);
-        if(n == 0)
+        if(n == 0){
             execerror("strange $...", (char *)0);
+        }
         yylval.narg = n;
         return ARG;
     }
@@ -207,8 +215,9 @@ yylex(){
     if(c =='"') { /* quoted string */
         char sbuf[100], *p, *emalloc();
         for(p = sbuf; (c=getc(fin)) != '"'; p++){
-            if(c == '\n' || c == EOF)
+            if(c == '\n' || c == EOF){
                 execerror("missing quote", "");
+            }
             if(p >= sbuf + sizeof(sbuf) - 1) {
                 *p = '\0';
                 execerror("string too long", sbuf);
