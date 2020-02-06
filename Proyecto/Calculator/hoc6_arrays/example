@@ -1,0 +1,3 @@
+proc example(){
+print(1)
+}
