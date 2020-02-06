@@ -119,7 +119,8 @@ arglist:                        { $$ = 0; }
         | expr                  { $$ = 1; }
         | arglist ',' expr      { $$ = $1 + 1; }
         ;
-newarr: ARRAY '[' expr ']'      { double newArr[(int)$3]; $$ = newArr; }
+newarr: ARRAY '[' expr ']'      { double ** newArr; *newArr = malloc((int)$3*sizeof(double)); $$ = *newArr; }
+//newarr: ARRAY '[' expr ']'      { double * newArr; double arr[(int)$3]; newArr = arr; $$ = &newArr; }
         ;
 %%
 
