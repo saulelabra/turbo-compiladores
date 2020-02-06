@@ -42,9 +42,8 @@ stmt:   expr    { code(pop); }
         | RETURN expr
             { defnonly("return"); $$=$2; code(funcret); }
         | PROCEDURE begin '(' arglist ')'
-            { $$ = $2; code3(call, (Inst)$1, (Inst)$1);}
+            { $$ = $2; code3(call, (Inst)$1, (Inst)$4);}
         | PRINT prlist { $$ = $2; }
-        | PRINT expr    { code(prexpr); $$ = $2; }
         | while cond stmt end {
             ($1)[1] = (Inst)$3;
             ($1)[2] = (Inst)$4; }
@@ -62,6 +61,8 @@ cond:   '(' expr ')' { code(STOP); $$ = $2; }
 while:  WHILE { $$ = code3(whilecode, STOP, STOP); }
         ;
 if:     IF { $$ = code(ifcode); code3(STOP, STOP, STOP); }
+        ;
+begin:                          { $$ = progp; }
         ;
 end:            { code(STOP); $$ = progp; }
         ;
@@ -83,7 +84,7 @@ expr:   NUMBER  { $$ = code2(constpush, (Inst)$1); }
         | expr '*' expr { code(mul); }
         | expr '/' expr { code(div); }
         | expr '^' expr { code(power); }
-        | expr '%' expr { code(modulate); }
+        | expr "%" expr { code(modulate); }
         | '-' expr %prec UNARYMINUS { $$ = $2; code(negate); }
         | '+' expr %prec UNARYPLUS { $$ = $2; code(plusate); }
         | expr GT expr { code(gt); }
@@ -96,11 +97,9 @@ expr:   NUMBER  { $$ = code2(constpush, (Inst)$1); }
         | expr OR expr { code(or); }
         | NOT expr     { $$ = $2; code(not); }
         ;
-begin:                          { $$ = progp; }
-        ;
 prlist: expr                    { code(prexpr);}
         | STRING                { $$ = code2(prstr, (Inst)$1);}
-        | prlist ',' expr       { code(prexpr);}
+        | prlist ',' expr       { code(prexpr); }
         | prlist ',' STRING     { code2(prstr, (Inst)$3);}
         ;
 defn:   FUNC procname           { $2->type=FUNCTION; indef=1; }
@@ -157,7 +156,7 @@ main(argc,  argv)
 
 execerror(char *s, char *t){ /* recover from runtime error */
     warning(s, t);
-    fseek(fin, 0L, 2)
+    fseek(fin, 0L, 2);
     longjmp(begin, 0);
 }
 
