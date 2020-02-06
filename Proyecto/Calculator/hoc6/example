@@ -1,3 +1,15 @@
-proc example(){
-print(1)
+func example(){
+    exampleArray = $1
+    size = $2
+    i = 0
+
+    while(i < size){
+        print exampleArray[i]
+    }
+}
+
+func ex(){
+    array2 = $1
+
+    print array2[0]
 }
