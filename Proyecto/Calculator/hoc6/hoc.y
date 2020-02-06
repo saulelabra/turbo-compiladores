@@ -290,15 +290,7 @@ warning(char *s, char *t){
         lineno++;
     }
 }
-
-run(){
-    setjmp(begin);
-    signal(SIGFPE, fpecatch);
-    for(initcode(); yyparse(); initcode()){
-        execute(progbase);
-    }
-}
-
+    
 moreinput(){
     if(gargc-- <= 0){
         return 0;
@@ -319,4 +311,12 @@ moreinput(){
     }
 
     return 1;
+}
+
+run(){
+    setjmp(begin);
+    signal(SIGFPE, fpecatch);
+    for(initcode(); yyparse(); initcode()){
+        execute(progbase);
+    }
 }
