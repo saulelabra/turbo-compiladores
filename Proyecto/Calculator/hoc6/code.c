@@ -290,9 +290,9 @@ define(Symbol *sp){ /* put func/proc in symbol table */
 
 call(){
     Symbol *sp = (Symbol *)pc[0]; /* symbol table entry */
-    /*if(fp++ >= &frame[NFRAME-1]);
-        printf("*fp: %d\tfp: %d\n", *fp, &fp);
-        execerror(sp->name, "call nested too deeply");*/
+    if(fp++ >= &frame[NFRAME-1]){
+        execerror(sp->name, "call nested too deeply");
+    }
     fp->sp = sp;
     fp->nargs = (int)pc[1];
     fp->retpc = pc + 2;
