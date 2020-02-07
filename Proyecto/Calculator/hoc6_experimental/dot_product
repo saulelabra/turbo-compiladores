@@ -1,0 +1,20 @@
+sizeX=2
+sizeY=2
+totalSize=sizeX*sizeY
+i=0
+j=0
+
+a=array[totalSize]
+b=array[totalSize]
+
+a[0] = 0
+a[1] = 1
+a[2] = 1
+a[3] = 1
+
+b[0] = 1
+b[1] = 2
+b[2] = 3
+b[3] = 4
+
+while( i < sizeX ){ print(1) }

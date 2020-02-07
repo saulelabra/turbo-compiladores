@@ -1,0 +1,39 @@
+sizeX = 5
+sizeY = 5
+
+pointsX = array[sizeX]
+pointsY = array[sizeY]
+
+pointsX[0] = 5
+pointsX[1] = 4
+pointsX[2] = 3
+pointsX[3] = 2
+pointsX[4] = 1
+
+
+pointsY[0] = 1
+pointsY[1] = 2
+pointsY[2] = 3
+pointsY[3] = 4
+pointsY[4] = 5
+
+refX = 0
+refY = 0
+
+i = 0
+iFinal = 0
+maxX = pointsX[0]
+maxY = pointsY[0]
+total = 0
+area = 0
+
+
+func calcArea(){
+	while (i < sizeX){
+		if(area < pointsX[i]-refX * pointsY[i]-refY){
+			iFinal = i
+			area = pointsX[i]-refX * pointsY[i]-refY
+		}
+	}
+	total = total + area
+}
