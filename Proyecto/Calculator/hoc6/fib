@@ -1,4 +1,4 @@
-proc fib(){
+func fib(){
 	a = 0
 	b = 1
 	while (b < $1) {
@@ -7,6 +7,10 @@ proc fib(){
 		b = a + b
 		a = c
 	}
-	print "\n"
+	yeet c
 }
 
+proc preFib(){
+	res = fib(200)
+	print res
+}

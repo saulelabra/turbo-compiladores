@@ -36,7 +36,7 @@ static struct {
 } keywords[] = {
     "proc", PROC,
     "func", FUNC,
-    "return", RETURN,
+    "yeet", YEET,
     "if",   IF,
     "else", ELSE,
     "while",WHILE,
