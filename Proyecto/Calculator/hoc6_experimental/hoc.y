@@ -10,7 +10,7 @@ int indef;
     int narg; /* Number of arguments */
 }
 %token <sym> NUMBER STRING PRINT VAR BLTIN UNDEF WHILE IF ELSE NEW ARRAY
-%token <sym> FUNCTION PROCEDURE YEET FUNC PROC READ
+%token <sym> FUNCTION PROCEDURE RETURN FUNC PROC READ
 %token <narg> ARG
 %type <inst> expr stmt asgn prlist stmtlist
 %type <inst> cond while if begin end
@@ -37,13 +37,13 @@ list:   /* nothing */
 asgn:   VAR '=' expr { code3(varpush, (Inst)$1, assign); $$=$3; }
         | ARG '=' expr
             { defnonly("$"); code2(argassign, (Inst)$1); $$=$3; }
-        | VAR '=' newarr { code3(varpush, (Inst)$1, assign); $$=$3; }
+        | VAR '=' ARRAY '[' expr ']' { code3(varpush, (Inst)$1, assignArr); $$=$3; }
         | VAR '[' expr ']' '=' expr { code3(varpush, (Inst)$1, assignInArr); $$=$6; }
         ;
 stmt:   expr    { code(pop); }
-        | YEET { defnonly("yeet"); code(procret); }
-        | YEET expr
-            { defnonly("yeet"); $$=$2; code(funcret); }
+        | RETURN { defnonly("return"); code(procret); }
+        | RETURN expr
+            { defnonly("return"); $$=$2; code(funcret); }
         | PROCEDURE begin '(' arglist ')'
             { $$ = $2; code3(call, (Inst)$1, (Inst)$4);}
         | PRINT prlist { $$ = $2; }
